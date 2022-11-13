@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="16dp"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="50dp"
+            android:src="@drawable/vector_drawable_disc"
+            android:background="@color/white"
+            />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/text_view_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+
+            android:textSize="26dp"
+            android:textColor="@color/black"
+
+            android:text="歌名"
+            />
+
+
+        <TextView
+            android:id="@+id/text_view_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/text_view_name"
+            android:text="演唱者"
+            android:textColor="@color/black"
+
+            android:textSize="20dp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="40dp"
+
+        android:gravity="center_vertical"
+        >
+        <SeekBar
+            android:layout_width="match_parent"
+            android:id="@+id/seek_bar"
+            android:max="100"
+            style="@style/Widget.AppCompat.SeekBar"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="8dp"
+        android:showDividers="middle"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/repeat_model_ibtn"
+            android:layout_width="35dp"
+            android:src="@drawable/vector_drawable_repeat"
+            android:background="@color/white"
+            android:layout_marginRight="16dp"
+            android:layout_height="35dp" />
+        <ImageButton
+            android:id="@+id/presong_ibtn"
+            android:layout_width="50dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/vector_drawable_presong"
+            android:background="@color/white"
+            android:layout_height="50dp" />
+        <ImageButton
+            android:id="@+id/play_pause_ibtn"
+            android:layout_width="75dp"
+            android:gravity="center"
+
+            android:src="@drawable/vector_drawable_play"
+            android:background="@color/white"
+            android:layout_height="75dp" />
+        <ImageButton
+            android:id="@+id/nextsong_ibtn"
+            android:layout_width="50dp"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/vector_drawable_nextsong"
+            android:background="@color/white"
+            android:layout_height="50dp" />
+        <ImageButton
+            android:id="@+id/play_menu_ibtn"
+            android:layout_width="35dp"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/vector_drawable_playlist"
+            android:background="@color/white"
+            android:layout_height="35dp" />
+
+    </LinearLayout>
+</LinearLayout>
