@@ -1,4 +1,4 @@
-package com.limnac.musicplayer;
+package com.limnac.musicplayer.fragments;
 
 import android.os.Bundle;
 
@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.limnac.musicplayer.R;
+
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link CommunityFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * @author limnac
+ * @email carl.hu@live.cn
+ * @date 2022/11/26 10:54
+ * @description com.limnac.musicplayer
  */
 public class CommunityFragment extends Fragment {
 

@@ -1,12 +1,20 @@
-package com.limnac.musicplayer;
+package com.limnac.musicplayer.activitys;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.widget.ImageButton;
+
+import com.limnac.musicplayer.R;
+
+/**
+ * @author limnac
+ * @email carl.hu@live.cn
+ * @date 2022/11/26 10:54
+ * @description com.limnac.musicplayer
+ */
 
 public class PlayActivity extends AppCompatActivity {
 

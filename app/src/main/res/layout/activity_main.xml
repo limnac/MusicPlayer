@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activitys.MainActivity">
 
     <FrameLayout
         android:id="@+id/content"
@@ -33,7 +33,7 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/homepage"
+                android:src="@drawable/vector_drawable_homepage"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/list"
+                android:src="@drawable/vector_drawable_list"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -85,7 +85,7 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/community"
+                android:src="@drawable/vector_drawable_community"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -111,7 +111,7 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/my"
+                android:src="@drawable/vector_drawable_my"
                 />
             <TextView
                 android:layout_width="wrap_content"
