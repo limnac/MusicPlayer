@@ -2,6 +2,8 @@ package com.limnac.musicplayer.model;
 
 import android.graphics.Bitmap;
 
+import com.limnac.musicplayer.R;
+
 /**
  * @author limnac
  * @email carl.hu@live.cn
@@ -10,20 +12,22 @@ import android.graphics.Bitmap;
  */
 
 public class Song {
-    //歌手
-    private String singer;
-    //歌名
-    private String song;
-    //歌曲的地址
-    private String path;
-    //歌曲的时长
-    private int duration;
-    //歌曲的大小
-    private long size;
-    //歌曲的专辑图片
-    private Bitmap image;
-    //默认歌曲图片
-    private int icon;
+    private String name; //歌曲名
+    private String singer; //歌手名
+    private long size; // 歌曲所占空间大小
+    private int duration; // 歌曲时间长度
+    private String path; // 歌曲地址
+    private long albumId; // 图片id
+    private long id; // 歌曲id
+    private int icon = R.drawable.vector_drawable_music; // 默认音乐图标
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getSinger() {
         return singer;
@@ -31,30 +35,6 @@ public class Song {
 
     public void setSinger(String singer) {
         this.singer = singer;
-    }
-
-    public String getSong() {
-        return song;
-    }
-
-    public void setSong(String song) {
-        this.song = song;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 
     public long getSize() {
@@ -65,12 +45,36 @@ public class Song {
         this.size = size;
     }
 
-    public Bitmap getImage() {
-        return image;
+    public int getDuration() {
+        return duration;
     }
 
-    public void setImage(Bitmap image) {
-        this.image = image;
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public long getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(long albumId) {
+        this.albumId = albumId;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public int getIcon() {
@@ -79,5 +83,13 @@ public class Song {
 
     public void setIcon(int icon) {
         this.icon = icon;
+    }
+
+    @Override
+    public String toString() {
+        return "Song{" +
+                "name='" + name + '\'' +
+                ", singer='" + singer + '\'' +
+                '}';
     }
 }

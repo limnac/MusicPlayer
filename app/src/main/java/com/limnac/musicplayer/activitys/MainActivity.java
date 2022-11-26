@@ -6,9 +6,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 
 import com.limnac.musicplayer.R;
@@ -16,6 +20,7 @@ import com.limnac.musicplayer.fragments.CommunityFragment;
 import com.limnac.musicplayer.fragments.HomePageFragment;
 import com.limnac.musicplayer.fragments.ListFragment;
 import com.limnac.musicplayer.fragments.MyFragment;
+import com.limnac.musicplayer.services.PlayService;
 
 /**
  * @author limnac
@@ -25,6 +30,8 @@ import com.limnac.musicplayer.fragments.MyFragment;
  */
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private String mTAG = "MainActivity";
 
     private View homePageBtn;
     private View listBtn;
@@ -36,6 +43,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MyFragment myFragment;
     private FragmentManager manager;
     private View v;
+
+    private PlayService mPlayService;
+
+    private ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+
+            PlayService.MyBinder myBinder = (PlayService.MyBinder) iBinder;
+            mPlayService = myBinder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };
 
     //读写权限
     private static String[] PERMISSIONS_STORAGE = {
@@ -50,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         getPermission();
         init();
+
+        Intent intent = new Intent(MainActivity.this, PlayService.class);
+        bindService(intent, conn, BIND_AUTO_CREATE);
     }
 
     private void getPermission(){
@@ -167,5 +193,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.myBtn.setBackgroundColor(0xffffffff);
     }
 
+    public PlayService getPlayService(){
+        return mPlayService;
+    }
 
 }

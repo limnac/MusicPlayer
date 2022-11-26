@@ -1,16 +1,25 @@
 package com.limnac.musicplayer.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
-import com.limnac.musicplayer.activitys.PlayActivity;
+import com.limnac.musicplayer.activitys.MainActivity;
 import com.limnac.musicplayer.R;
+import com.limnac.musicplayer.adapter.SongAdapter;
+import com.limnac.musicplayer.model.Song;
+import com.limnac.musicplayer.services.PlayService;
+import com.limnac.musicplayer.utils.MusicUtil;
+
+import java.util.List;
 
 /**
  * @author limnac
@@ -19,6 +28,12 @@ import com.limnac.musicplayer.R;
  * @description com.limnac.musicplayer
  */
 public class ListFragment extends Fragment {
+
+    private String mTAG = "ListFragment";
+    private static List<Song> mSongList;
+    private ListView mSongListView;
+
+    private PlayService mPlayService;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,10 +76,30 @@ public class ListFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mPlayService = ((MainActivity)context).getPlayService();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list, container, false);
+        mSongList = MusicUtil.getmusic(getContext());
+        mSongListView = view.findViewById(R.id.songs_listview);
+        SongAdapter adapter = new SongAdapter(mSongList,getContext());
+        mSongListView.setAdapter(adapter);
+        mSongListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                mPlayService.playNewMusic(i);
+            }
+        });
         return view;
+    }
+
+    public  static List<Song> getSongList(){
+        return mSongList;
     }
 }
