@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import com.limnac.musicplayer.activitys.MainActivity;
 import com.limnac.musicplayer.R;
+import com.limnac.musicplayer.activitys.PlayActivity;
 import com.limnac.musicplayer.adapter.SongAdapter;
 import com.limnac.musicplayer.model.Song;
 import com.limnac.musicplayer.services.PlayService;
@@ -94,6 +95,7 @@ public class ListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 mPlayService.playNewMusic(i);
+                PlayActivity.startPlayActivity(getContext());
             }
         });
         return view;
