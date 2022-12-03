@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 public class ViewHolder {
 
+    private static final String TAG = "ViewHolder";
+
     private TextView nameTextView;
     private ImageView coverImageView ;
     private TextView singerTextView;

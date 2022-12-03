@@ -30,7 +30,8 @@ import java.util.List;
  */
 public class ListFragment extends Fragment {
 
-    private String mTAG = "ListFragment";
+    private static final String TAG = "ListFragment";
+
     private static List<Song> mSongList;
     private ListView mSongListView;
 

@@ -1,4 +1,5 @@
 package com.limnac.musicplayer.utils;
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import java.io.File;
@@ -25,7 +26,8 @@ public class LogUtil {
     // 单日志文件大小上限 MB
     private static final long LOG_SIZE_MAX = 10;
     // 日志文件输出文件夹
-    private static final String LOG_FILE_PRINT_DIR = "/sdcard/ADAS/log/info/";
+    @SuppressLint("SdCardPath")
+    private static final String LOG_FILE_PRINT_DIR = "/sdcard/limnac/com.limnac.musicplayer/log/";
 
     // 文件名格式
     private static final SimpleDateFormat FILE_NAME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss-SSS");
@@ -49,14 +51,14 @@ public class LogUtil {
 
     public static final void w(String TAG, String msg) {
         synchronized (LOCK) {
-            Log.i(TAG, msg);
+            Log.w(TAG, msg);
             printLog("WARN ", TAG, msg);
         }
     }
 
     public static final void e(String TAG, String msg) {
         synchronized (LOCK) {
-            Log.i(TAG, msg);
+            Log.e(TAG, msg);
             printLog("ERROR", TAG, msg);
         }
     }
@@ -65,6 +67,13 @@ public class LogUtil {
         synchronized (LOCK) {
             e.printStackTrace();
             printStackTrace(e);
+        }
+    }
+
+    public static final void throwable(Throwable throwable) {
+        synchronized (LOCK) {
+            throwable.printStackTrace();
+            printStackTrace(throwable);
         }
     }
 
@@ -84,6 +93,18 @@ public class LogUtil {
             exception.printStackTrace(new PrintWriter(errorsWriter));
             FileWriter fileWriter = new FileWriter(getFile(), true);
             fileWriter.write(formatLog("ERROR", "System.err", errorsWriter.toString()));
+            fileWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void printStackTrace(Throwable throwable) {
+        try {
+            StringWriter errorsWriter = new StringWriter();
+            throwable.printStackTrace(new PrintWriter(errorsWriter));
+            FileWriter fileWriter = new FileWriter(getFile(), true);
+            fileWriter.write(formatLog("THROWABLE", "System.throwable", errorsWriter.toString()));
             fileWriter.close();
         } catch (Exception e) {
             e.printStackTrace();

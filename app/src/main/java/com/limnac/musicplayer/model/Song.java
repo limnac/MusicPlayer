@@ -12,6 +12,9 @@ import com.limnac.musicplayer.R;
  */
 
 public class Song {
+
+    private static final String TAG = "Song";
+
     private String name; //歌曲名
     private String singer; //歌手名
     private long size; // 歌曲所占空间大小

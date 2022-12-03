@@ -31,7 +31,7 @@ import com.limnac.musicplayer.services.PlayService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private String mTAG = "MainActivity";
+    private static final String TAG = "MainActivity";
 
     private View homePageBtn;
     private View listBtn;

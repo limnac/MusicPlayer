@@ -22,6 +22,8 @@ import com.limnac.musicplayer.services.PlayService;
 
 public class PlayActivity extends AppCompatActivity {
 
+    private static final String TAG = "PlayActivity";
+
     private final int REPEAT_MODEL = 0;
     private final int REPEAR_ONCE_MODEL = 1;
     private final int SHUFFLE = 2;

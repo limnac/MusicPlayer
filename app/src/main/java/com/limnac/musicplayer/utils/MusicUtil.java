@@ -27,6 +27,7 @@ import java.util.List;
  */
 public class MusicUtil {
 
+    private static final String TAG = "MusicUtil";
 
     //定义一个集合，存放从本地读取到的内容
     public static ArrayList<Song> list;

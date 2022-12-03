@@ -24,7 +24,8 @@ import java.util.Random;
  */
 public class PlayService extends Service {
 
-    private String mTAG = "PlayService";
+    private static final String TAG = "PlayService";
+
     private static MediaPlayer mMediaPlayer;
     private List<Song> mSongList;
     private int mPlayModel = 0;
@@ -41,31 +42,31 @@ public class PlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtil.e(mTAG,"PlayService is onCreate");
+        LogUtil.e(TAG,"PlayService is onCreate");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtil.e(mTAG,"PlayService is onStartCommmand");
+        LogUtil.e(TAG,"PlayService is onStartCommmand");
         return START_NOT_STICKY;
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        LogUtil.e(mTAG,"PlayService is onBind");
+        LogUtil.e(TAG,"PlayService is onBind");
         return binder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        LogUtil.e(mTAG,"PlayService is onUnbind");
+        LogUtil.e(TAG,"PlayService is onUnbind");
         return false;
     }
 
     @Override
     public void onDestroy() {
-        LogUtil.e(mTAG,"PlayService is onDestroy");
+        LogUtil.e(TAG,"PlayService is onDestroy");
         super.onDestroy();
     }
 
@@ -85,7 +86,7 @@ public class PlayService extends Service {
             mMediaPlayer.reset();
         }
 
-        LogUtil.e(mTAG,"歌曲地址："+mSongList.get(mPosition).getPath());
+        LogUtil.e(TAG,"歌曲地址："+mSongList.get(mPosition).getPath());
 
         try {
             mMediaPlayer.setDataSource(mSongList.get(mPosition).getPath());

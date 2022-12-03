@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class SongAdapter extends BaseAdapter {
 
+    private static final String TAG = "SongAdapter";
+
     private List<Song> mSongList;
     private Context mContext;
 
