@@ -86,9 +86,9 @@ public class MusicUtil {
                         singer = str[0];
                         song.setSinger(singer);
                         name = str[1];
-                        song.setName(name);
+                        song.setName(StringUtil.removeFileClassName(name));
                     } else {
-                        song.setName(name);
+                        song.setName(StringUtil.removeFileClassName(name));
                     }
                     list.add(song);
                 }
