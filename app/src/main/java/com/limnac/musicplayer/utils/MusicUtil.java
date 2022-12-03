@@ -64,12 +64,14 @@ public class MusicUtil {
                 //list.add(song);
                 //把歌曲名字和歌手切割开
                 //song.setName(name);
-                song.setSinger(singer);
-                song.setPath(path);
-                song.setDuration(duration);
-                song.setSize(size);
-                song.setId(id);
-                song.setAlbumId(albumId);
+                // builder 构建器写法
+                song.setSinger(singer)
+                    .setPath(path)
+                    .setDuration(duration)
+                    .setSize(size)
+                    .setId(id)
+                    .setAlbumId(albumId);
+
                 if (size > 1000 * 800) {
                     if (name.contains("-")) {
                         String[] str = name.split("-");

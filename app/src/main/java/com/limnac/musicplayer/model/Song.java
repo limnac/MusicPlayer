@@ -36,56 +36,63 @@ public class Song {
         return singer;
     }
 
-    public void setSinger(String singer) {
+    public Song setSinger(String singer) {
         this.singer = singer;
+        return this;
     }
 
     public long getSize() {
         return size;
     }
 
-    public void setSize(long size) {
+    public Song setSize(long size) {
         this.size = size;
+        return this;
     }
 
     public int getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public Song setDuration(int duration) {
         this.duration = duration;
+        return this;
     }
 
     public String getPath() {
         return path;
     }
 
-    public void setPath(String path) {
+    public Song setPath(String path) {
         this.path = path;
+        return this;
     }
 
     public long getAlbumId() {
         return albumId;
     }
 
-    public void setAlbumId(long albumId) {
+    public Song setAlbumId(long albumId) {
         this.albumId = albumId;
+        return this;
     }
 
     public long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public Song setId(long id) {
         this.id = id;
+        return this;
     }
 
     public int getIcon() {
         return icon;
     }
 
-    public void setIcon(int icon) {
+    public Song setIcon(int icon) {
         this.icon = icon;
+        return this;
     }
 
     @Override
