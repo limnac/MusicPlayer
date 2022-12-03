@@ -88,7 +88,7 @@ public class ListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list, container, false);
-        mSongList = MusicUtil.getmusic(getContext());
+        mSongList = MusicUtil.getSongList();
         mSongListView = view.findViewById(R.id.songs_listview);
         SongAdapter adapter = new SongAdapter(mSongList,getContext());
         mSongListView.setAdapter(adapter);
@@ -96,13 +96,9 @@ public class ListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 mPlayService.playNewMusic(i);
-                PlayActivity.startPlayActivity(getContext());
+                PlayActivity.startPlayActivity(getContext(),i);
             }
         });
         return view;
-    }
-
-    public  static List<Song> getSongList(){
-        return mSongList;
     }
 }

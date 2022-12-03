@@ -1,6 +1,7 @@
 package com.limnac.musicplayer.utils;
 
 import com.limnac.musicplayer.R;
+import com.limnac.musicplayer.data.MusicConfig;
 import com.limnac.musicplayer.model.Song;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -30,9 +31,9 @@ public class MusicUtil {
     private static final String TAG = "MusicUtil";
 
     //定义一个集合，存放从本地读取到的内容
-    public static ArrayList<Song> list;
+    private static ArrayList<Song> list;
 
-    public static Song song;
+    private static Song song;
     private static String name;
     private static String singer;
     private static String path;
@@ -42,6 +43,13 @@ public class MusicUtil {
     private static long id;
     //获取专辑封面的Uri
     private static final Uri albumArtUri = Uri.parse("content://media/external/audio/albumart");
+
+    public static List<Song> getSongList(){
+        if(list==null){
+            list = getmusic(MusicConfig.getContext());
+        }
+        return list;
+    }
 
     public static ArrayList<Song> getmusic(Context context) {
 

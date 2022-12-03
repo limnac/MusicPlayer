@@ -8,9 +8,11 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
+import com.limnac.musicplayer.activitys.PlayActivity;
 import com.limnac.musicplayer.fragments.ListFragment;
 import com.limnac.musicplayer.model.Song;
 import com.limnac.musicplayer.utils.LogUtil;
+import com.limnac.musicplayer.utils.MusicUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -78,7 +80,8 @@ public class PlayService extends Service {
 
     public void playNewMusic(int pos){
         this.mPosition = pos;
-        mSongList = ListFragment.getSongList();
+        mSongList = MusicUtil.getSongList();
+        PlayActivity.updatePlayUI(mPosition);
 
         if(mMediaPlayer==null){
             mMediaPlayer = new MediaPlayer();
@@ -125,6 +128,7 @@ public class PlayService extends Service {
         }else{
             playNewMusic(0);
         }
+
     }
 
     public void nextMusic(){
@@ -136,6 +140,7 @@ public class PlayService extends Service {
             }
             playNewMusic(mPosition);
         }
+
     }
 
     public void preMusic(){
@@ -147,5 +152,10 @@ public class PlayService extends Service {
             }
             playNewMusic(mPosition);
         }
+
+    }
+
+    public int getPosition(){
+        return mPosition;
     }
 }
