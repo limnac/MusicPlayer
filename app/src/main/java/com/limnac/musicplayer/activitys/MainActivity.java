@@ -2,6 +2,7 @@ package com.limnac.musicplayer.activitys;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -14,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
+import android.widget.Button;
 
 import com.limnac.musicplayer.R;
 import com.limnac.musicplayer.fragments.CommunityFragment;
@@ -29,7 +31,7 @@ import com.limnac.musicplayer.services.PlayService;
  * @description com.limnac.musicplayer
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity{
 
     private static final String TAG = "MainActivity";
 
@@ -71,8 +73,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         getPermission();
-        init();
+        initView();
 
         Intent intent = new Intent(MainActivity.this, PlayService.class);
         bindService(intent, conn, BIND_AUTO_CREATE);
@@ -86,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void init() {
+    private void initView() {
         manager = this.getSupportFragmentManager();
 
         homePageBtn = findViewById(R.id.homepage_layout);
@@ -94,29 +97,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         communityBtn = findViewById(R.id.community_layout);
         myBtn = findViewById(R.id.my_layout);
 
-        homePageBtn.setOnClickListener(this);
-        listBtn.setOnClickListener(this);
-        communityBtn.setOnClickListener(this);
-        myBtn.setOnClickListener(this);
+        homePageBtn.setOnClickListener(v->setSelectionTab(0));
+        listBtn.setOnClickListener(v->setSelectionTab(1));
+        communityBtn.setOnClickListener(v->setSelectionTab(2));
+        myBtn.setOnClickListener(v->setSelectionTab(3));
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.homepage_layout:
-                setSelectionTab(0);
-                break;
-            case R.id.list_layout:
-                setSelectionTab(1);
-                break;
-            case R.id.community_layout:
-                setSelectionTab(2);
-                break;
-            case R.id.my_layout:
-                setSelectionTab(3);
-                break;
-        }
-    }
 
     public  void setSelectionTab(int index){
         FragmentTransaction trans = manager.beginTransaction();
