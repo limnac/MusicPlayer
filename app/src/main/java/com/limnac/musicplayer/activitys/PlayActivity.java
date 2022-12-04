@@ -3,6 +3,7 @@ package com.limnac.musicplayer.activitys;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -40,32 +41,32 @@ public class PlayActivity extends AppCompatActivity {
     private int repeat_count = 0;
     private boolean isPlay = true;
     private PlayService mPlayService;
-    private Messenger mServiceMessenger;
+    @SuppressLint("StaticFieldLeak")
     private static TextView mSongTextView;
+    @SuppressLint("StaticFieldLeak")
     private static TextView mSingerTextView;
     private static int mPosition;
 
-    private Handler mHandler = new Handler(){
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
-            switch (msg.what){
-                case MusicBean.UPDATE_UI:
-                    mPosition = msg.arg1;
-                    LogUtil.i(TAG,"现在播放的是: "+MusicUtil.getSongList().get(mPosition).getName());
-                    updatePlayUI();
-                    break;
+            if (msg.what == MusicBean.UPDATE_UI) {
+                mPosition = msg.arg1;
+                LogUtil.i(TAG, "现在播放的是: " + MusicUtil.getSongList().get(mPosition).getName());
+                updatePlayUI();
             }
         }
     };
 
 
-    private ServiceConnection conn = new ServiceConnection() {
+    private final ServiceConnection conn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
 
             PlayService.MyBinder myBinder = (PlayService.MyBinder) iBinder;
             mPlayService = myBinder.getService();
-            mServiceMessenger = myBinder.getMessenger();
+            Messenger mServiceMessenger = myBinder.getMessenger();
 
             Messenger messenger = new Messenger(mHandler);
             Message msg = new Message();

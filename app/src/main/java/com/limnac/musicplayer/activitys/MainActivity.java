@@ -1,11 +1,5 @@
 package com.limnac.musicplayer.activitys;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -15,7 +9,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
-import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.limnac.musicplayer.R;
 import com.limnac.musicplayer.fragments.CommunityFragment;
@@ -44,11 +42,10 @@ public class MainActivity extends AppCompatActivity{
     private CommunityFragment communityFragment;
     private MyFragment myFragment;
     private FragmentManager manager;
-    private View v;
 
     private PlayService mPlayService;
 
-    private ServiceConnection conn = new ServiceConnection() {
+    private final ServiceConnection conn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
 
@@ -63,11 +60,11 @@ public class MainActivity extends AppCompatActivity{
     };
 
     //读写权限
-    private static String[] PERMISSIONS_STORAGE = {
+    private static final String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
     //请求状态码
-    private static int REQUEST_PERMISSION_CODE = 1;
+    private static final int REQUEST_PERMISSION_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +149,6 @@ public class MainActivity extends AppCompatActivity{
 
     /**
      * 隐藏所有的Fragment
-     * @param trans
      */
     private void hideFragments(FragmentTransaction trans) {
         if(homePageFragment != null) {

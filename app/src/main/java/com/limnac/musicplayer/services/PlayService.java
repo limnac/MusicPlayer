@@ -9,14 +9,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.limnac.musicplayer.activitys.PlayActivity;
 import com.limnac.musicplayer.bean.MusicBean;
-import com.limnac.musicplayer.fragments.ListFragment;
 import com.limnac.musicplayer.model.Song;
 import com.limnac.musicplayer.utils.LogUtil;
 import com.limnac.musicplayer.utils.MusicUtil;
@@ -41,20 +38,18 @@ public class PlayService extends Service {
     private int mPosition = 0;
     private Messenger mActivityMessenger;
 
-    private Handler mHandler = new Handler(){
-        @SuppressLint("HandlerLeak")
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
-            switch (msg.what){
-                case MusicBean.MSG_BIND:
-                    mActivityMessenger = msg.replyTo;
-                    break;
+            if (msg.what == MusicBean.MSG_BIND) {
+                mActivityMessenger = msg.replyTo;
             }
 
         }
     };
 
-    private Messenger mServiceMessenger = new Messenger(mHandler);
+    private final Messenger mServiceMessenger = new Messenger(mHandler);
 
     public class MyBinder extends Binder{
 
@@ -68,7 +63,7 @@ public class PlayService extends Service {
 
     }
 
-    private MyBinder binder = new MyBinder();
+    private final MyBinder binder = new MyBinder();
 
     @Override
     public void onCreate() {
@@ -127,7 +122,7 @@ public class PlayService extends Service {
 
         mMediaPlayer.prepareAsync();
 
-        mMediaPlayer.setOnPreparedListener(mMediaPlayer -> mMediaPlayer.start());
+        mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
 
         mMediaPlayer.setOnCompletionListener(mediaPlayer -> {
             if(mPlayModel==MusicBean.REPEAR_ONCE_MODEL){
@@ -196,7 +191,4 @@ public class PlayService extends Service {
 
     }
 
-    public int getPosition(){
-        return mPosition;
-    }
 }
