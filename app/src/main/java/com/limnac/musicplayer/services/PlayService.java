@@ -1,14 +1,21 @@
 package com.limnac.musicplayer.services;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.limnac.musicplayer.activitys.PlayActivity;
+import com.limnac.musicplayer.bean.MusicBean;
 import com.limnac.musicplayer.fragments.ListFragment;
 import com.limnac.musicplayer.model.Song;
 import com.limnac.musicplayer.utils.LogUtil;
@@ -32,11 +39,33 @@ public class PlayService extends Service {
     private List<Song> mSongList;
     private int mPlayModel = 0;
     private int mPosition = 0;
+    private Messenger mActivityMessenger;
+
+    private Handler mHandler = new Handler(){
+        @SuppressLint("HandlerLeak")
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            switch (msg.what){
+                case MusicBean.MSG_BIND:
+                    mActivityMessenger = msg.replyTo;
+                    break;
+            }
+
+        }
+    };
+
+    private Messenger mServiceMessenger = new Messenger(mHandler);
 
     public class MyBinder extends Binder{
+
         public PlayService getService(){
             return PlayService.this;
         }
+
+        public Messenger getMessenger(){
+            return mServiceMessenger;
+        }
+
     }
 
     private MyBinder binder = new MyBinder();
@@ -44,19 +73,19 @@ public class PlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtil.e(TAG,"PlayService is onCreate");
+        LogUtil.i(TAG,"PlayService is onCreate");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtil.e(TAG,"PlayService is onStartCommmand");
+        LogUtil.i(TAG,"PlayService is onStartCommmand");
         return START_NOT_STICKY;
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        LogUtil.e(TAG,"PlayService is onBind");
+        LogUtil.i(TAG,"PlayService is onBind");
         return binder;
     }
 
@@ -81,7 +110,7 @@ public class PlayService extends Service {
     public void playNewMusic(int pos){
         this.mPosition = pos;
         mSongList = MusicUtil.getSongList();
-        PlayActivity.updatePlayUI(mPosition);
+        sendMessageUpdateUI();
 
         if(mMediaPlayer==null){
             mMediaPlayer = new MediaPlayer();
@@ -89,7 +118,6 @@ public class PlayService extends Service {
             mMediaPlayer.reset();
         }
 
-        LogUtil.e(TAG,"歌曲地址："+mSongList.get(mPosition).getPath());
 
         try {
             mMediaPlayer.setDataSource(mSongList.get(mPosition).getPath());
@@ -102,19 +130,12 @@ public class PlayService extends Service {
         mMediaPlayer.setOnPreparedListener(mMediaPlayer -> mMediaPlayer.start());
 
         mMediaPlayer.setOnCompletionListener(mediaPlayer -> {
-            switch (mPlayModel){
-                case 1:
-                    playNewMusic(mPosition);
-                    break;
-                case 2:
-                    Random random = new Random();
-                    int i = random.nextInt(mSongList.size());
-                    playNewMusic(i);
-                    break;
-                default:
-                    nextMusic();
-                    break;
+            if(mPlayModel==MusicBean.REPEAR_ONCE_MODEL){
+                playNewMusic(mPosition);
+            }else{
+                nextMusic();
             }
+
         });
     }
 
@@ -133,14 +154,19 @@ public class PlayService extends Service {
 
     public void nextMusic(){
         if(mMediaPlayer!=null){
-            if(mPosition == mSongList.size()-1){
-                mPosition = 0;
+            if(mPlayModel==MusicBean.SHUFFLE){
+                Random random = new Random();
+                int i = (1+random.nextInt(mSongList.size()-1)+ mPosition) % mSongList.size();
+                playNewMusic(i);
             }else{
-                mPosition++;
+                if(mPosition == mSongList.size()-1){
+                    mPosition = 0;
+                }else{
+                    mPosition++;
+                }
+                playNewMusic(mPosition);
             }
-            playNewMusic(mPosition);
         }
-
     }
 
     public void preMusic(){
@@ -151,6 +177,21 @@ public class PlayService extends Service {
                 mPosition--;
             }
             playNewMusic(mPosition);
+        }
+
+    }
+
+    public void sendMessageUpdateUI(){
+        Message msg = new Message();
+        msg.what = MusicBean.UPDATE_UI;
+        msg.arg1 = mPosition;
+        if(mActivityMessenger!=null){
+            try {
+                mActivityMessenger.send(msg);
+            } catch (Exception e) {
+                LogUtil.e(TAG,e.getMessage());
+                LogUtil.error(e);
+            }
         }
 
     }
