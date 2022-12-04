@@ -9,9 +9,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -151,17 +153,15 @@ public class MainActivity extends AppCompatActivity{
      * 隐藏所有的Fragment
      */
     private void hideFragments(FragmentTransaction trans) {
-        if(homePageFragment != null) {
-            trans.hide(homePageFragment);
-        }
-        if(listFragment != null) {
-            trans.hide(listFragment);
-        }
-        if(communityFragment != null) {
-            trans.hide(communityFragment);
-        }
-        if(myFragment != null) {
-            trans.hide(myFragment);
+        hideFragment(trans,homePageFragment);
+        hideFragment(trans,listFragment);
+        hideFragment(trans,communityFragment);
+        hideFragment(trans,myFragment);
+    }
+
+    private void hideFragment(FragmentTransaction trans, Fragment fragment){
+        if(fragment !=null){
+            trans.hide(fragment);
         }
     }
 
