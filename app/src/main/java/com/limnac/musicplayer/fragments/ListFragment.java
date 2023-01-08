@@ -96,7 +96,7 @@ public class ListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 mPlayService.playNewMusic(i);
-                PlayActivity.startPlayActivity(getContext(),i);
+                // PlayActivity.startPlayActivity(getContext(),i);
             }
         });
         return view;

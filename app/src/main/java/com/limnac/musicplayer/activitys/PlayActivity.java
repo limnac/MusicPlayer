@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.limnac.musicplayer.R;
 import com.limnac.musicplayer.bean.MusicBean;
+import com.limnac.musicplayer.constant.PlayStatus;
 import com.limnac.musicplayer.model.Song;
 import com.limnac.musicplayer.services.PlayService;
 import com.limnac.musicplayer.utils.LogUtil;
@@ -39,13 +40,13 @@ public class PlayActivity extends AppCompatActivity {
     private static final String TAG = "PlayActivity";
 
     private int repeat_count = 0;
-    private boolean isPlay = true;
-    private PlayService mPlayService;
-    @SuppressLint("StaticFieldLeak")
-    private static TextView mSongTextView;
-    @SuppressLint("StaticFieldLeak")
-    private static TextView mSingerTextView;
-    private static int mPosition;
+    private PlayService  mPlayService;
+
+    private  TextView mSongTextView;
+    private  TextView mSingerTextView;
+    private ImageButton mImageButtonPlay;
+    private  int mPosition;
+    private int mPlayStatus;
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler(){
@@ -53,7 +54,7 @@ public class PlayActivity extends AppCompatActivity {
         public void handleMessage(@NonNull Message msg) {
             if (msg.what == MusicBean.UPDATE_UI) {
                 mPosition = msg.arg1;
-                LogUtil.i(TAG, "现在播放的是: " + MusicUtil.getSongList().get(mPosition).getName());
+                mPlayStatus = msg.arg2;
                 updatePlayUI();
             }
         }
@@ -66,7 +67,7 @@ public class PlayActivity extends AppCompatActivity {
 
             PlayService.MyBinder myBinder = (PlayService.MyBinder) iBinder;
             mPlayService = myBinder.getService();
-            Messenger mServiceMessenger = myBinder.getMessenger();
+            Messenger mServiceMessenger = myBinder.getMessengerToPlayActivity();
 
             Messenger messenger = new Messenger(mHandler);
             Message msg = new Message();
@@ -104,35 +105,17 @@ public class PlayActivity extends AppCompatActivity {
     private void initView(){
         mSongTextView = findViewById(R.id.text_view_name);
         mSingerTextView = findViewById(R.id.text_view_singer);
+        mImageButtonPlay = findViewById(R.id.play_pause_ibtn);
+
+        mImageButtonPlay.setOnClickListener(v->mPlayService.playMusic());
 
         ImageButton btnRepeatModel = findViewById(R.id.repeat_model_ibtn);
-        ImageButton btnPlayPause = findViewById(R.id.play_pause_ibtn);
         ImageButton btnNextSong = findViewById(R.id.nextsong_ibtn);
         ImageButton btnPreSong = findViewById(R.id.presong_ibtn);
 
         btnRepeatModel.setOnClickListener(v-> changeRepeatModel(btnRepeatModel));
-        btnPlayPause.setOnClickListener(v-> play2pause(btnPlayPause));
-        btnNextSong.setOnClickListener(v->nextMusic());
-        btnPreSong.setOnClickListener(v->preMusic());
-    }
-
-    private void preMusic(){
-        mPlayService.preMusic();
-    }
-
-    private void nextMusic(){
-        mPlayService.nextMusic();
-    }
-
-    private void play2pause(ImageButton ibtn){
-        if(isPlay){
-            isPlay = false;
-            ibtn.setImageResource(R.drawable.vector_drawable_play);
-        }else{
-            isPlay = true;
-            ibtn.setImageResource(R.drawable.vector_drawable_pause);
-        }
-        mPlayService.playMusic();
+        btnNextSong.setOnClickListener(v->mPlayService.nextMusic());
+        btnPreSong.setOnClickListener(v->mPlayService.preMusic());
     }
 
     private void changeRepeatModel(ImageButton ibtn){
@@ -157,17 +140,26 @@ public class PlayActivity extends AppCompatActivity {
         }
     }
 
-    public static void startPlayActivity(Context context, int pos){
+    public static void startPlayActivity(Context context){
         Intent intent = new Intent(context,PlayActivity.class);
         context.startActivity(intent);
-        PlayActivity.mPosition = pos;
     }
 
-    public void updatePlayUI(){
+    private void  updatePlayUI(){
+        List<Song> songList = MusicUtil.getSongList();
         if(mSongTextView!=null&&mSingerTextView!=null){
-            List<Song> songList = MusicUtil.getSongList();
             mSongTextView.setText(songList.get(mPosition).getName());
             mSingerTextView.setText(songList.get(mPosition).getSinger());
+        }
+        switch (mPlayStatus){
+            case PlayStatus.IN_PAUSE:
+                mImageButtonPlay.setImageResource(R.drawable.vector_drawable_play);
+                break;
+            case PlayStatus.IN_PLAY:
+                mImageButtonPlay.setImageResource(R.drawable.vector_drawable_pause);
+                break;
+            default:
+                break;
         }
     }
 }

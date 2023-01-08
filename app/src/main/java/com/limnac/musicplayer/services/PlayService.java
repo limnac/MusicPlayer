@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.limnac.musicplayer.bean.MusicBean;
+import com.limnac.musicplayer.constant.PlayStatus;
 import com.limnac.musicplayer.model.Song;
 import com.limnac.musicplayer.utils.LogUtil;
 import com.limnac.musicplayer.utils.MusicUtil;
@@ -36,20 +37,36 @@ public class PlayService extends Service {
     private List<Song> mSongList;
     private int mPlayModel = 0;
     private int mPosition = 0;
-    private Messenger mActivityMessenger;
+    private int mPlayStatus = PlayStatus.IN_PAUSE;
+    private Messenger mPlayActivityMessenger;
+    private Messenger mMainActivityMessenger;
 
     @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler(){
+    private final Handler mHandlerToPlayActivity = new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
             if (msg.what == MusicBean.MSG_BIND) {
-                mActivityMessenger = msg.replyTo;
+                mPlayActivityMessenger = msg.replyTo;
+                sendMessageUpdateUI();
             }
 
         }
     };
 
-    private final Messenger mServiceMessenger = new Messenger(mHandler);
+    private final Messenger mServiceMessengerToPlayActivity = new Messenger(mHandlerToPlayActivity);
+
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandlerToMainActivity = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if (msg.what == MusicBean.MSG_BIND) {
+                mMainActivityMessenger = msg.replyTo;
+            }
+
+        }
+    };
+
+    private final Messenger mServiceMessengerToMainActivity = new Messenger(mHandlerToMainActivity);
 
     public class MyBinder extends Binder{
 
@@ -57,8 +74,12 @@ public class PlayService extends Service {
             return PlayService.this;
         }
 
-        public Messenger getMessenger(){
-            return mServiceMessenger;
+        public Messenger getMessengerToPlayActivity(){
+            return mServiceMessengerToPlayActivity;
+        }
+
+        public Messenger getMessengerToMainActivity(){
+            return mServiceMessengerToMainActivity;
         }
 
     }
@@ -105,14 +126,12 @@ public class PlayService extends Service {
     public void playNewMusic(int pos){
         this.mPosition = pos;
         mSongList = MusicUtil.getSongList();
-        sendMessageUpdateUI();
 
         if(mMediaPlayer==null){
             mMediaPlayer = new MediaPlayer();
         }else{
             mMediaPlayer.reset();
         }
-
 
         try {
             mMediaPlayer.setDataSource(mSongList.get(mPosition).getPath());
@@ -132,19 +151,23 @@ public class PlayService extends Service {
             }
 
         });
+        mPlayStatus = PlayStatus.IN_PLAY;
+        sendMessageUpdateUI();
     }
 
     public void playMusic(){
         if(mMediaPlayer!=null){
             if(mMediaPlayer.isPlaying()){
                 mMediaPlayer.pause();
+                mPlayStatus = PlayStatus.IN_PAUSE;
             }else{
                 mMediaPlayer.start();
+                mPlayStatus = PlayStatus.IN_PLAY;
             }
+            sendMessageUpdateUI();
         }else{
             playNewMusic(0);
         }
-
     }
 
     public void nextMusic(){
@@ -164,6 +187,8 @@ public class PlayService extends Service {
         }
     }
 
+
+
     public void preMusic(){
         if(mMediaPlayer!=null){
             if(mPosition==0){
@@ -173,22 +198,35 @@ public class PlayService extends Service {
             }
             playNewMusic(mPosition);
         }
-
     }
 
     public void sendMessageUpdateUI(){
-        Message msg = new Message();
-        msg.what = MusicBean.UPDATE_UI;
-        msg.arg1 = mPosition;
-        if(mActivityMessenger!=null){
+
+        if(mPlayActivityMessenger!=null){
             try {
-                mActivityMessenger.send(msg);
+                Message msg = new Message();
+                msg.what = MusicBean.UPDATE_UI;
+                msg.arg1 = mPosition;
+                msg.arg2 = mPlayStatus;
+                mPlayActivityMessenger.send(msg);
             } catch (Exception e) {
                 LogUtil.e(TAG,e.getMessage());
                 LogUtil.error(e);
             }
         }
 
+        if(mMainActivityMessenger!=null){
+            try {
+                Message msg = new Message();
+                msg.what = MusicBean.UPDATE_UI;
+                msg.arg1 = mPosition;
+                msg.arg2 = mPlayStatus;
+                mMainActivityMessenger.send(msg);
+            } catch (Exception e) {
+                LogUtil.e(TAG,e.getMessage());
+                LogUtil.error(e);
+            }
+        }
     }
 
 }

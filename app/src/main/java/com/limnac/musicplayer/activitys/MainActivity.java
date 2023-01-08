@@ -1,16 +1,24 @@
 package com.limnac.musicplayer.activitys;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -18,11 +26,18 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.limnac.musicplayer.R;
+import com.limnac.musicplayer.bean.MusicBean;
+import com.limnac.musicplayer.constant.PlayStatus;
 import com.limnac.musicplayer.fragments.CommunityFragment;
 import com.limnac.musicplayer.fragments.HomePageFragment;
 import com.limnac.musicplayer.fragments.ListFragment;
 import com.limnac.musicplayer.fragments.MyFragment;
+import com.limnac.musicplayer.model.Song;
 import com.limnac.musicplayer.services.PlayService;
+import com.limnac.musicplayer.utils.LogUtil;
+import com.limnac.musicplayer.utils.MusicUtil;
+
+import java.util.List;
 
 /**
  * @author limnac
@@ -45,6 +60,24 @@ public class MainActivity extends AppCompatActivity{
     private MyFragment myFragment;
     private FragmentManager manager;
 
+    private  TextView mSongTextView;
+    private  TextView mSingerTextView;
+    private  ImageButton btnPlay;
+    private  int mPosition;
+    private int mPlayStatus;
+
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if (msg.what == MusicBean.UPDATE_UI) {
+                mPosition = msg.arg1;
+                mPlayStatus = msg.arg2;
+                updateMainUI();
+            }
+        }
+    };
+
     private PlayService mPlayService;
 
     private final ServiceConnection conn = new ServiceConnection() {
@@ -53,6 +86,17 @@ public class MainActivity extends AppCompatActivity{
 
             PlayService.MyBinder myBinder = (PlayService.MyBinder) iBinder;
             mPlayService = myBinder.getService();
+
+            Messenger mServiceMessenger = myBinder.getMessengerToMainActivity();
+            Messenger messenger = new Messenger(mHandler);
+            Message msg = new Message();
+            msg.what = MusicBean.MSG_BIND;
+            msg.replyTo = messenger;
+            try{
+                mServiceMessenger.send(msg);
+            }catch (Exception e){
+                LogUtil.error(e);
+            }
         }
 
         @Override
@@ -80,6 +124,24 @@ public class MainActivity extends AppCompatActivity{
         bindService(intent, conn, BIND_AUTO_CREATE);
     }
 
+    private void  updateMainUI(){
+        List<Song> songList = MusicUtil.getSongList();
+        if(mSongTextView!=null&&mSingerTextView!=null){
+            mSongTextView.setText(songList.get(mPosition).getName());
+            mSingerTextView.setText(songList.get(mPosition).getSinger());
+        }
+        switch (mPlayStatus){
+            case PlayStatus.IN_PAUSE:
+                btnPlay.setImageResource(R.drawable.vector_drawable_play);
+                break;
+            case PlayStatus.IN_PLAY:
+                btnPlay.setImageResource(R.drawable.vector_drawable_pause);
+                break;
+            default:
+                break;
+        }
+    }
+
     private void getPermission(){
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -100,6 +162,21 @@ public class MainActivity extends AppCompatActivity{
         listBtn.setOnClickListener(v->setSelectionTab(1));
         communityBtn.setOnClickListener(v->setSelectionTab(2));
         myBtn.setOnClickListener(v->setSelectionTab(3));
+
+        mSongTextView = findViewById(R.id.song_name_main_activity);
+        mSingerTextView = findViewById(R.id.song_singer_main_activity);
+
+        btnPlay = findViewById(R.id.music_play_main_activity);
+        btnPlay.setOnClickListener(v->mPlayService.playMusic());
+
+        ImageButton btnNextMusic = findViewById(R.id.music_next_main_activity);
+        btnNextMusic.setOnClickListener(v->mPlayService.nextMusic());
+
+        ImageButton btnPreMusic = findViewById(R.id.music_previous_main_activity);
+        btnPreMusic.setOnClickListener(v->mPlayService.preMusic());
+
+        ImageView btnStartPlayActivity = findViewById(R.id.song_image);
+        btnStartPlayActivity.setOnClickListener(v->PlayActivity.startPlayActivity(this));
     }
 
 
