@@ -9,14 +9,15 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.drake.logcat.LogCat;
 import com.limnac.musicplayer.bean.MusicBean;
 import com.limnac.musicplayer.constant.PlayStatus;
 import com.limnac.musicplayer.model.Song;
-import com.limnac.musicplayer.utils.LogUtil;
 import com.limnac.musicplayer.utils.MusicUtil;
 
 import java.io.IOException;
@@ -89,31 +90,31 @@ public class PlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtil.i(TAG,"PlayService is onCreate");
+        LogCat.i("PlayService is onCreate",TAG);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtil.i(TAG,"PlayService is onStartCommmand");
+        LogCat.i("PlayService is onStartCommmand",TAG);
         return START_NOT_STICKY;
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        LogUtil.i(TAG,"PlayService is onBind");
+        LogCat.i("PlayService is onBind",TAG);
         return binder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        LogUtil.e(TAG,"PlayService is onUnbind");
+        LogCat.e("PlayService is onUnbind",TAG);
         return false;
     }
 
     @Override
     public void onDestroy() {
-        LogUtil.e(TAG,"PlayService is onDestroy");
+        LogCat.e("PlayService is onDestroy",TAG);
         super.onDestroy();
     }
 
@@ -209,9 +210,8 @@ public class PlayService extends Service {
                 msg.arg1 = mPosition;
                 msg.arg2 = mPlayStatus;
                 mPlayActivityMessenger.send(msg);
-            } catch (Exception e) {
-                LogUtil.e(TAG,e.getMessage());
-                LogUtil.error(e);
+            } catch (Throwable throwable) {
+                LogCat.e(throwable,TAG);
             }
         }
 
@@ -222,9 +222,8 @@ public class PlayService extends Service {
                 msg.arg1 = mPosition;
                 msg.arg2 = mPlayStatus;
                 mMainActivityMessenger.send(msg);
-            } catch (Exception e) {
-                LogUtil.e(TAG,e.getMessage());
-                LogUtil.error(e);
+            } catch (Throwable throwable) {
+                LogCat.e(throwable,TAG);
             }
         }
     }

@@ -18,12 +18,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.drake.logcat.LogCat;
 import com.limnac.musicplayer.R;
 import com.limnac.musicplayer.bean.MusicBean;
 import com.limnac.musicplayer.constant.PlayStatus;
 import com.limnac.musicplayer.model.Song;
 import com.limnac.musicplayer.services.PlayService;
-import com.limnac.musicplayer.utils.LogUtil;
 import com.limnac.musicplayer.utils.MusicUtil;
 
 import java.util.List;
@@ -75,8 +75,8 @@ public class PlayActivity extends AppCompatActivity {
             msg.replyTo = messenger;
             try{
                 mServiceMessenger.send(msg);
-            }catch (Exception e){
-                LogUtil.error(e);
+            }catch (Throwable throwable){
+                LogCat.e(throwable,TAG);
             }
         }
 
@@ -96,7 +96,6 @@ public class PlayActivity extends AppCompatActivity {
 
         initView();
         updatePlayUI();
-        LogUtil.i(TAG,"现在播放的是: "+MusicUtil.getSongList().get(mPosition).getName());
 
         Intent intent = new Intent(PlayActivity.this, PlayService.class);
         bindService(intent, conn, BIND_AUTO_CREATE);

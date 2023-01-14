@@ -2,6 +2,7 @@ package com.limnac.musicplayer;
 
 import android.app.Application;
 
+import com.drake.logcat.LogCat;
 import com.limnac.musicplayer.data.MusicConfig;
 
 /**
@@ -16,6 +17,7 @@ public class MusicApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        LogCat.INSTANCE.setTraceEnabled(false);
         MusicConfig.setContext(getApplicationContext());
     }
 }

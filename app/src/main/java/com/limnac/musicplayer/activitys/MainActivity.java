@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,6 +24,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.drake.logcat.LogCat;
 import com.limnac.musicplayer.R;
 import com.limnac.musicplayer.bean.MusicBean;
 import com.limnac.musicplayer.constant.PlayStatus;
@@ -34,7 +34,6 @@ import com.limnac.musicplayer.fragments.ListFragment;
 import com.limnac.musicplayer.fragments.MyFragment;
 import com.limnac.musicplayer.model.Song;
 import com.limnac.musicplayer.services.PlayService;
-import com.limnac.musicplayer.utils.LogUtil;
 import com.limnac.musicplayer.utils.MusicUtil;
 
 import java.util.List;
@@ -94,8 +93,8 @@ public class MainActivity extends AppCompatActivity{
             msg.replyTo = messenger;
             try{
                 mServiceMessenger.send(msg);
-            }catch (Exception e){
-                LogUtil.error(e);
+            }catch (Throwable throwable){
+                LogCat.e(throwable,TAG);
             }
         }
 
@@ -250,6 +249,11 @@ public class MainActivity extends AppCompatActivity{
         this.listBtn.setBackgroundColor(0xffffffff);
         this.communityBtn.setBackgroundColor(0xffffffff);
         this.myBtn.setBackgroundColor(0xffffffff);
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(false);
     }
 
     public PlayService getPlayService(){
