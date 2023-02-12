@@ -10,7 +10,7 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></FrameLayout>
+        android:layout_weight="1" />
 
     <View
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
         android:layout_height="80dp">
 
         <ImageView
-            android:id="@+id/song_image"
+            android:id="@+id/song_image_activity_main"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/song_name_main_activity"
+                    android:id="@+id/song_name_activity_main"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="歌名"
@@ -50,7 +50,7 @@
                     android:textSize="18sp"/>
 
                 <TextView
-                    android:id="@+id/song_singer_main_activity"
+                    android:id="@+id/song_singer_activity_main"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="歌手"
@@ -68,7 +68,7 @@
                     android:layout_weight="1"/>
 
                 <ImageButton
-                    android:id="@+id/music_previous_main_activity"
+                    android:id="@+id/music_previous_activity_main"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center_vertical"
@@ -82,7 +82,7 @@
                     android:layout_weight="1"/>
 
                 <ImageButton
-                    android:id="@+id/music_play_main_activity"
+                    android:id="@+id/music_play_activity_main"
                     android:layout_width="65dp"
                     android:layout_height="65dp"
                     android:layout_gravity="center_vertical"
@@ -96,7 +96,7 @@
                     android:layout_weight="1"/>
 
                 <ImageButton
-                    android:id="@+id/music_next_main_activity"
+                    android:id="@+id/music_next_activity_main"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center_vertical"
@@ -127,7 +127,7 @@
         android:layout_height="60dp"
         >
         <LinearLayout
-            android:id="@+id/homepage_layout"
+            android:id="@+id/playing_layout_activity_main"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -137,12 +137,12 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/vector_drawable_homepage"
+                android:src="@drawable/vector_drawable_playing"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="首页"
+                android:text="播放"
                 />
         </LinearLayout>
         <View
@@ -153,7 +153,7 @@
         </View>
 
         <LinearLayout
-            android:id="@+id/list_layout"
+            android:id="@+id/list_layout_activity_main"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -168,7 +168,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="列表"
+                android:text="歌曲"
                 />
         </LinearLayout>
         <View
@@ -179,7 +179,7 @@
         </View>
 
         <LinearLayout
-            android:id="@+id/community_layout"
+            android:id="@+id/classify_layout_activity_main"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -189,12 +189,12 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/vector_drawable_community"
+                android:src="@drawable/vector_drawable_classify"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="社区"
+                android:text="分类"
                 />
         </LinearLayout>
         <View
@@ -205,7 +205,7 @@
         </View>
 
         <LinearLayout
-            android:id="@+id/my_layout"
+            android:id="@+id/my_layout_activity_main"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

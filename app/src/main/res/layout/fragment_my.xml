@@ -1,14 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.MyFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="这是我的" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <ImageView
+            android:id="@+id/head_portrait_fragment_my"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop = "40dp"
+            android:layout_gravity = "center"
+            android:src="@drawable/vector_drawable_headportrait"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            />
+        <TextView
+            android:id="@+id/my_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity = "center"
+            android:text = "张三"
+            android:textSize = "25sp"
+            tools:ignore="HardcodedText"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            />
 
-</FrameLayout>
+        <Button
+            android:id="@+id/scan_button_fragment_my"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity = "center"
+            android:text = "重新扫描本地音乐"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+</LinearLayout>

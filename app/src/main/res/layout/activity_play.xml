@@ -14,14 +14,14 @@
         >
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/image_song_activity_play"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:layout_gravity="center"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="50dp"
-            android:src="@drawable/vector_drawable_disc"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
             android:background="@color/white"
-            />
+            android:src="@drawable/vector_drawable_disc" />
     </LinearLayout>
 
     <RelativeLayout
@@ -30,27 +30,26 @@
         android:layout_weight="1">
 
         <TextView
-            android:id="@+id/text_view_name"
+            android:id="@+id/song_name_activity_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
-
-            android:textSize="26dp"
-            android:textColor="@color/black"
+            android:layout_marginTop="0dp"
 
             android:text="歌名"
-            />
+            android:textColor="@color/black"
+
+            android:textSize="26dp" />
 
 
         <TextView
-            android:id="@+id/text_view_singer"
+            android:id="@+id/singer_name_activity_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/text_view_name"
+            android:layout_below="@id/song_name_activity_play"
             android:text="演唱者"
             android:textColor="@color/black"
 
@@ -83,21 +82,21 @@
         android:gravity="center">
 
         <ImageButton
-            android:id="@+id/repeat_model_ibtn"
+            android:id="@+id/repeat_model_button_activity_play"
             android:layout_width="35dp"
             android:src="@drawable/vector_drawable_repeat"
             android:background="@color/white"
             android:layout_marginRight="16dp"
             android:layout_height="35dp" />
         <ImageButton
-            android:id="@+id/presong_ibtn"
+            android:id="@+id/pre_song_button_activity_play"
             android:layout_width="50dp"
             android:layout_marginRight="16dp"
             android:src="@drawable/vector_drawable_presong"
             android:background="@color/white"
             android:layout_height="50dp" />
         <ImageButton
-            android:id="@+id/play_pause_ibtn"
+            android:id="@+id/play_pause_button_activity_play"
             android:layout_width="75dp"
             android:gravity="center"
 
@@ -105,14 +104,14 @@
             android:background="@color/white"
             android:layout_height="75dp" />
         <ImageButton
-            android:id="@+id/nextsong_ibtn"
+            android:id="@+id/next_song_button_activity_play"
             android:layout_width="50dp"
             android:layout_marginLeft="16dp"
             android:src="@drawable/vector_drawable_nextsong"
             android:background="@color/white"
             android:layout_height="50dp" />
         <ImageButton
-            android:id="@+id/play_menu_ibtn"
+            android:id="@+id/play_menu_button_activity_play"
             android:layout_width="35dp"
             android:layout_marginLeft="16dp"
             android:src="@drawable/vector_drawable_playlist"

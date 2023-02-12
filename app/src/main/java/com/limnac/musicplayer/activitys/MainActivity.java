@@ -1,41 +1,41 @@
 package com.limnac.musicplayer.activitys;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.drake.logcat.LogCat;
 import com.limnac.musicplayer.R;
-import com.limnac.musicplayer.bean.MusicBean;
-import com.limnac.musicplayer.constant.PlayStatus;
-import com.limnac.musicplayer.fragments.CommunityFragment;
-import com.limnac.musicplayer.fragments.HomePageFragment;
+import com.limnac.musicplayer.data.adapter.SongAdapter;
+import com.limnac.musicplayer.data.constant.MusicBean;
+import com.limnac.musicplayer.data.constant.PlayStatus;
+import com.limnac.musicplayer.fragments.ClassifyFragment;
 import com.limnac.musicplayer.fragments.ListFragment;
 import com.limnac.musicplayer.fragments.MyFragment;
-import com.limnac.musicplayer.model.Song;
+import com.limnac.musicplayer.fragments.PlayingFragment;
+import com.limnac.musicplayer.data.model.Song;
 import com.limnac.musicplayer.services.PlayService;
-import com.limnac.musicplayer.utils.MusicUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,30 +49,41 @@ public class MainActivity extends AppCompatActivity{
 
     private static final String TAG = "MainActivity";
 
-    private View homePageBtn;
-    private View listBtn;
-    private View communityBtn;
-    private View myBtn;
-    private HomePageFragment homePageFragment;
-    private ListFragment listFragment;
-    private CommunityFragment communityFragment;
-    private MyFragment myFragment;
-    private FragmentManager manager;
+    private View mPlayingBtn;
+    private View mListBtn;
+    private View mClassifyBtn;
+    private View mMyBtn;
+    private PlayingFragment mPlayingFragment;
+    private ListFragment mListFragment;
+    private ClassifyFragment mClassifyFragment;
+    private MyFragment mMyFragment;
+    private FragmentManager mFragmentManager;
 
     private  TextView mSongTextView;
     private  TextView mSingerTextView;
-    private  ImageButton btnPlay;
+    private  ImageButton mBtnPlay;
+    private  ImageView mImageSong;
     private  int mPosition;
     private int mPlayStatus;
+    private List<Song> mSongList;
 
     @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler(){
+    private final Handler mHandler = new Handler(Looper.getMainLooper()){
         @Override
         public void handleMessage(@NonNull Message msg) {
             if (msg.what == MusicBean.UPDATE_UI) {
                 mPosition = msg.arg1;
                 mPlayStatus = msg.arg2;
+                mSongList = new ArrayList<>();
+                if(msg.obj instanceof List<?>){
+                    for(Object o:(List<?>)msg.obj){
+                        if(o instanceof Song){
+                            mSongList.add((Song)o);
+                        }
+                    }
+                }
                 updateMainUI();
+
             }
         }
     };
@@ -104,135 +115,180 @@ public class MainActivity extends AppCompatActivity{
         }
     };
 
-    //读写权限
-    private static final String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    //请求状态码
-    private static final int REQUEST_PERMISSION_CODE = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getPermission();
         initView();
-
+        setSelectionTab(0);
         Intent intent = new Intent(MainActivity.this, PlayService.class);
         bindService(intent, conn, BIND_AUTO_CREATE);
     }
 
-    private void  updateMainUI(){
-        List<Song> songList = MusicUtil.getSongList();
-        if(mSongTextView!=null&&mSingerTextView!=null){
-            mSongTextView.setText(songList.get(mPosition).getName());
-            mSingerTextView.setText(songList.get(mPosition).getSinger());
-        }
-        switch (mPlayStatus){
-            case PlayStatus.IN_PAUSE:
-                btnPlay.setImageResource(R.drawable.vector_drawable_play);
-                break;
-            case PlayStatus.IN_PLAY:
-                btnPlay.setImageResource(R.drawable.vector_drawable_pause);
-                break;
-            default:
-                break;
-        }
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(false);
     }
 
-    private void getPermission(){
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_PERMISSION_CODE);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    private void  updateMainUI(){
+        if(mSongList==null||mSongList.size()==0){
+            LogCat.e("读取不到歌曲",TAG);
+            return;
+        }
+        if(mSongTextView!=null&&mSingerTextView!=null){
+            mSongTextView.setText(mSongList.get(mPosition).getName());
+            mSingerTextView.setText(mSongList.get(mPosition).getSinger());
+        }
+        if(mBtnPlay!=null){
+            switch (mPlayStatus){
+                case PlayStatus.IN_PAUSE:
+                    mBtnPlay    .setImageResource(R.drawable.vector_drawable_play);
+                    break;
+                case PlayStatus.IN_PLAY:
+                    mBtnPlay.setImageResource(R.drawable.vector_drawable_pause);
+                    break;
+                default:
+                    break;
             }
         }
+        if(mImageSong!=null&&mSongList.get(mPosition).getBitmap()!=null){
+            mImageSong.setImageBitmap(mSongList.get(mPosition).getBitmap());
+        }
+        updatePlayingFragment();
     }
+    private List<Song> beforeSongList = new ArrayList<>();
+    private void updatePlayingFragment(){
+        if(beforeSongList.equals(mSongList)){
+            return;
+        }else{
+            beforeSongList = mSongList;
+        }
+        if(mPlayingFragment==null){
+            LogCat.e("playingFragment==null",TAG);
+            return;
+        }
+        ListView playingListView = mPlayingFragment.requireView().findViewById(R.id.playing_listview_fragment_playing);
+        if(playingListView==null){
+            LogCat.e("playingListView==null",TAG);
+            return;
+        }
+        SongAdapter adapter = new SongAdapter(mSongList,getApplicationContext());
+        playingListView.setAdapter(adapter);
+        playingListView.setOnItemClickListener((adapterView, view, i, l) -> {
+            if(mPlayService!=null){
+                mPlayService.playNewMusic(i,mSongList);
+            }else{
+                LogCat.e("无法获取服务",TAG);
+            }
+        });
+    }
+
+
+
+
 
     private void initView() {
-        manager = this.getSupportFragmentManager();
+        mFragmentManager = this.getSupportFragmentManager();
 
-        homePageBtn = findViewById(R.id.homepage_layout);
-        listBtn = findViewById(R.id.list_layout);
-        communityBtn = findViewById(R.id.community_layout);
-        myBtn = findViewById(R.id.my_layout);
+        mPlayingBtn = findViewById(R.id.playing_layout_activity_main);
+        mListBtn = findViewById(R.id.list_layout_activity_main);
+        mClassifyBtn = findViewById(R.id.classify_layout_activity_main);
+        mMyBtn = findViewById(R.id.my_layout_activity_main);
 
-        homePageBtn.setOnClickListener(v->setSelectionTab(0));
-        listBtn.setOnClickListener(v->setSelectionTab(1));
-        communityBtn.setOnClickListener(v->setSelectionTab(2));
-        myBtn.setOnClickListener(v->setSelectionTab(3));
+        mPlayingBtn.setOnClickListener(v->setSelectionTab(0));
+        mListBtn.setOnClickListener(v->setSelectionTab(1));
+        mClassifyBtn.setOnClickListener(v->setSelectionTab(2));
+        mMyBtn.setOnClickListener(v->setSelectionTab(3));
 
-        mSongTextView = findViewById(R.id.song_name_main_activity);
-        mSingerTextView = findViewById(R.id.song_singer_main_activity);
+        mSongTextView = findViewById(R.id.song_name_activity_main);
+        mSingerTextView = findViewById(R.id.song_singer_activity_main);
+        mImageSong = findViewById(R.id.song_image_activity_main);
+        mImageSong.setOnClickListener(v->startPlayActivity());
 
-        btnPlay = findViewById(R.id.music_play_main_activity);
-        btnPlay.setOnClickListener(v->mPlayService.playMusic());
+        mBtnPlay = findViewById(R.id.music_play_activity_main);
+        mBtnPlay.setOnClickListener(v->mPlayService.playMusic());
 
-        ImageButton btnNextMusic = findViewById(R.id.music_next_main_activity);
+        ImageButton btnNextMusic = findViewById(R.id.music_next_activity_main);
         btnNextMusic.setOnClickListener(v->mPlayService.nextMusic());
 
-        ImageButton btnPreMusic = findViewById(R.id.music_previous_main_activity);
+        ImageButton btnPreMusic = findViewById(R.id.music_previous_activity_main);
         btnPreMusic.setOnClickListener(v->mPlayService.preMusic());
-
-        ImageView btnStartPlayActivity = findViewById(R.id.song_image);
-        btnStartPlayActivity.setOnClickListener(v->PlayActivity.startPlayActivity(this));
     }
 
+    private long mFlag;
+    private void startPlayActivity(){
+        if(System.currentTimeMillis()-mFlag<300){
+            mFlag = System.currentTimeMillis();
+            return;
+        }
+        mFlag = System.currentTimeMillis();
+        PlayActivity.startActivity(MainActivity.this);
 
-    public  void setSelectionTab(int index){
-        FragmentTransaction trans = manager.beginTransaction();
+    }
+
+    public void setSelectionTab(int index){
+        FragmentTransaction trans = mFragmentManager.beginTransaction();
         setUnSelect();
         hideFragments(trans);
 
         switch (index){
             case 0:
-                this.homePageBtn.setBackgroundColor(0xff0000ff);
-                if(homePageFragment==null) {
-                    homePageFragment = new HomePageFragment();
-                    trans.add(R.id.content,homePageFragment);
+                this.mPlayingBtn.setBackgroundColor(0xff0000ff);
+                if(mPlayingFragment==null) {
+                    mPlayingFragment = new PlayingFragment();
+                    trans.add(R.id.content,mPlayingFragment);
                 }else{
-                    trans.show(homePageFragment);
+                    trans.show(mPlayingFragment);
                 }
                 break;
             case 1:
-                this.listBtn.setBackgroundColor(0xff0000ff);
-                if(listFragment==null) {
-                    listFragment = new ListFragment();
-                    trans.add(R.id.content,listFragment);
+                this.mListBtn.setBackgroundColor(0xff0000ff);
+                if(mListFragment==null) {
+                    mListFragment = new ListFragment();
+                    trans.add(R.id.content,mListFragment);
                 }else{
-                    trans.show(listFragment);
+                    trans.show(mListFragment);
                 }
                 break;
             case 2:
-                this.communityBtn.setBackgroundColor(0xff0000ff);
-                if(communityFragment==null) {
-                    communityFragment = new CommunityFragment();
-                    trans.add(R.id.content,communityFragment);
+                this.mClassifyBtn.setBackgroundColor(0xff0000ff);
+                if(mClassifyFragment==null) {
+                    mClassifyFragment = new ClassifyFragment();
+                    trans.add(R.id.content,mClassifyFragment);
                 }else{
-                    trans.show(communityFragment);
+                    trans.show(mClassifyFragment);
                 }
                 break;
             case 3:
-                this.myBtn.setBackgroundColor(0xff0000ff);
-                if(myFragment==null) {
-                    myFragment = new MyFragment();
-                    trans.add(R.id.content,myFragment);
+                this.mMyBtn.setBackgroundColor(0xff0000ff);
+                if(mMyFragment==null) {
+                    mMyFragment = new MyFragment();
+                    trans.add(R.id.content,mMyFragment);
                 }else{
-                    trans.show(myFragment);
+                    trans.show(mMyFragment);
                 }
                 break;
         }
         trans.commit();
     }
 
+
     /**
      * 隐藏所有的Fragment
      */
     private void hideFragments(FragmentTransaction trans) {
-        hideFragment(trans,homePageFragment);
-        hideFragment(trans,listFragment);
-        hideFragment(trans,communityFragment);
-        hideFragment(trans,myFragment);
+        hideFragment(trans,mPlayingFragment);
+        hideFragment(trans,mListFragment);
+        hideFragment(trans,mClassifyFragment);
+        hideFragment(trans,mMyFragment);
     }
 
     private void hideFragment(FragmentTransaction trans, Fragment fragment){
@@ -245,15 +301,15 @@ public class MainActivity extends AppCompatActivity{
      * 将所有按钮设置为非选择状态
      */
     private void setUnSelect() {
-        this.homePageBtn.setBackgroundColor(0xffffffff);
-        this.listBtn.setBackgroundColor(0xffffffff);
-        this.communityBtn.setBackgroundColor(0xffffffff);
-        this.myBtn.setBackgroundColor(0xffffffff);
+        this.mPlayingBtn.setBackgroundColor(0xffffffff);
+        this.mListBtn.setBackgroundColor(0xffffffff);
+        this.mClassifyBtn.setBackgroundColor(0xffffffff);
+        this.mMyBtn.setBackgroundColor(0xffffffff);
     }
 
-    @Override
-    public void onBackPressed() {
-        moveTaskToBack(false);
+    public static void startActivity(Context context){
+        Intent intent = new Intent(context,MainActivity.class);
+        context.startActivity(intent);
     }
 
     public PlayService getPlayService(){

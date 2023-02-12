@@ -1,14 +1,15 @@
 package com.limnac.musicplayer.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import androidx.fragment.app.Fragment;
 
 import com.limnac.musicplayer.R;
+import com.limnac.musicplayer.activitys.StartActivity;
 
 /**
  * @author limnac
@@ -64,6 +65,33 @@ public class MyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my, container, false);
+        View view = inflater.inflate(R.layout.fragment_my, container, false);
+        Button buttonScan = view.findViewById(R.id.scan_button_fragment_my);
+        buttonScan.setOnClickListener(v->scanLocalMusic());
+        return view;
+    }
+
+    private void scanLocalMusic() {
+        StartActivity.startActivity(getContext());
+        requireActivity().finish();
+//        MusicManager.getInstance().update(new UpdateCallBack() {
+//            @Override
+//            public void success() {
+//                Looper.prepare();
+//                Toast toast =  Toast.makeText(getActivity(),"音乐加载结束",Toast.LENGTH_SHORT);
+//                toast.setGravity(Gravity.CENTER,0,0);
+//                toast.show();
+//                Looper.loop();
+//            }
+//
+//            @Override
+//            public void onFailed(int errorCode, String msg) {
+//                Looper.prepare();
+//                Toast toast =  Toast.makeText(getActivity(),"音乐加载失败",Toast.LENGTH_SHORT);
+//                toast.setGravity(Gravity.CENTER,0,0);
+//                toast.show();
+//                Looper.loop();
+//            }
+//        });
     }
 }

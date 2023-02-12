@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.ClassifyFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text = "歌手"
+            android:textSize = "30sp"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id = "@+id/recycler_view_singers_fragment_classify"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text = "专辑"
+            android:textSize = "30sp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id = "@+id/recycler_view_albums_fragment_classify"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"/>
+
+
+
+
+
+    </LinearLayout>
+
+
+
+
+
+</FrameLayout>

@@ -1,16 +1,15 @@
 package com.limnac.musicplayer.activitys;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.view.Gravity;
@@ -18,14 +17,18 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.drake.logcat.LogCat;
 import com.limnac.musicplayer.R;
-import com.limnac.musicplayer.bean.MusicBean;
-import com.limnac.musicplayer.constant.PlayStatus;
-import com.limnac.musicplayer.model.Song;
+import com.limnac.musicplayer.data.constant.MusicBean;
+import com.limnac.musicplayer.data.constant.PlayStatus;
+import com.limnac.musicplayer.data.model.Song;
 import com.limnac.musicplayer.services.PlayService;
-import com.limnac.musicplayer.utils.MusicUtil;
+import com.limnac.musicplayer.utils.MusicUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,22 +42,32 @@ public class PlayActivity extends AppCompatActivity {
 
     private static final String TAG = "PlayActivity";
 
-    private int repeat_count = 0;
+    private int mRepeatCount = 0;
     private PlayService  mPlayService;
 
     private  TextView mSongTextView;
     private  TextView mSingerTextView;
+    private ImageButton mImageSong;
     private ImageButton mImageButtonPlay;
     private  int mPosition;
     private int mPlayStatus;
+    private List<Song> mSongList;
 
     @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler(){
+    private final Handler mHandler = new Handler(Looper.getMainLooper()){
         @Override
         public void handleMessage(@NonNull Message msg) {
             if (msg.what == MusicBean.UPDATE_UI) {
                 mPosition = msg.arg1;
                 mPlayStatus = msg.arg2;
+                mSongList = new ArrayList<>();
+                if(msg.obj instanceof List<?>){
+                    for(Object o:(List<?>)msg.obj){
+                        if(o instanceof Song){
+                            mSongList.add((Song)o);
+                        }
+                    }
+                }
                 updatePlayUI();
             }
         }
@@ -92,8 +105,6 @@ public class PlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
 
-
-
         initView();
         updatePlayUI();
 
@@ -102,35 +113,65 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     private void initView(){
-        mSongTextView = findViewById(R.id.text_view_name);
-        mSingerTextView = findViewById(R.id.text_view_singer);
-        mImageButtonPlay = findViewById(R.id.play_pause_ibtn);
+        mSongTextView = findViewById(R.id.song_name_activity_play);
+        mSingerTextView = findViewById(R.id.singer_name_activity_play);
+        mImageSong = findViewById(R.id.image_song_activity_play);
+        mImageButtonPlay = findViewById(R.id.play_pause_button_activity_play);
 
         mImageButtonPlay.setOnClickListener(v->mPlayService.playMusic());
 
-        ImageButton btnRepeatModel = findViewById(R.id.repeat_model_ibtn);
-        ImageButton btnNextSong = findViewById(R.id.nextsong_ibtn);
-        ImageButton btnPreSong = findViewById(R.id.presong_ibtn);
+        mImageSong.setOnClickListener(v->startLryActivity());
 
+        ImageButton btnRepeatModel = findViewById(R.id.repeat_model_button_activity_play);
         btnRepeatModel.setOnClickListener(v-> changeRepeatModel(btnRepeatModel));
+
+        ImageButton btnNextSong = findViewById(R.id.next_song_button_activity_play);
         btnNextSong.setOnClickListener(v->mPlayService.nextMusic());
+
+        ImageButton btnPreSong = findViewById(R.id.pre_song_button_activity_play);
         btnPreSong.setOnClickListener(v->mPlayService.preMusic());
+
+        ImageButton btnPlayMenu = findViewById(R.id.play_menu_button_activity_play);
+        btnPlayMenu.setOnClickListener(v->startListActivity());
     }
 
-    private void changeRepeatModel(ImageButton ibtn){
-        repeat_count = (repeat_count+1)%3;
+    private long mFlag1;
+    private void startListActivity(){
+        if(System.currentTimeMillis()-mFlag1<300){
+            mFlag1 = System.currentTimeMillis();
+            return;
+        }
+        mFlag1 = System.currentTimeMillis();
+        ListActivity.startActivity(PlayActivity.this,mSongList);
+    }
+
+    private long mFlag2;
+    private void startLryActivity(){
+        if(System.currentTimeMillis()-mFlag2<300){
+            mFlag2 = System.currentTimeMillis();
+            return;
+        }
+        mFlag2 = System.currentTimeMillis();
+        LryActivity.startActivity(PlayActivity.this);
+    }
+
+
+
+
+    private void changeRepeatModel(ImageButton iButton){
+        mRepeatCount = (mRepeatCount+1)%3;
         Toast toast = null;
-        if(repeat_count==MusicBean.REPEAT_MODEL){
+        if(mRepeatCount==MusicBean.REPEAT_MODEL){
             mPlayService.setPlayModel(MusicBean.REPEAT_MODEL);
-            ibtn.setImageResource(R.drawable.vector_drawable_repeat);
+            iButton.setImageResource(R.drawable.vector_drawable_repeat);
             toast = Toast.makeText(this,"已切换到顺序播放",Toast.LENGTH_SHORT);
-        }else if(repeat_count==MusicBean.REPEAR_ONCE_MODEL){
-            mPlayService.setPlayModel(MusicBean.REPEAR_ONCE_MODEL);
-            ibtn.setImageResource(R.drawable.vector_drawable_repeatonce);
+        }else if(mRepeatCount==MusicBean.REPEAT_ONCE_MODEL){
+            mPlayService.setPlayModel(MusicBean.REPEAT_ONCE_MODEL);
+            iButton.setImageResource(R.drawable.vector_drawable_repeatonce);
             toast = Toast.makeText(this,"已切换到单曲循环",Toast.LENGTH_SHORT);
-        }else if(repeat_count==MusicBean.SHUFFLE){
+        }else if(mRepeatCount==MusicBean.SHUFFLE){
             mPlayService.setPlayModel(MusicBean.SHUFFLE);
-            ibtn.setImageResource(R.drawable.vector_drawable_shuffle);
+            iButton.setImageResource(R.drawable.vector_drawable_shuffle);
             toast = Toast.makeText(this,"已切换到随机播放",Toast.LENGTH_SHORT);
         }
         if(toast!=null){
@@ -139,26 +180,36 @@ public class PlayActivity extends AppCompatActivity {
         }
     }
 
-    public static void startPlayActivity(Context context){
+    public static void startActivity(Context context){
         Intent intent = new Intent(context,PlayActivity.class);
         context.startActivity(intent);
     }
 
+
     private void  updatePlayUI(){
-        List<Song> songList = MusicUtil.getSongList();
-        if(mSongTextView!=null&&mSingerTextView!=null){
-            mSongTextView.setText(songList.get(mPosition).getName());
-            mSingerTextView.setText(songList.get(mPosition).getSinger());
+        if(mSongList==null||mSongList.size()==0){
+            LogCat.i("无正在播放的歌曲",TAG);
+            return;
         }
-        switch (mPlayStatus){
-            case PlayStatus.IN_PAUSE:
-                mImageButtonPlay.setImageResource(R.drawable.vector_drawable_play);
-                break;
-            case PlayStatus.IN_PLAY:
-                mImageButtonPlay.setImageResource(R.drawable.vector_drawable_pause);
-                break;
-            default:
-                break;
+        if(mSongTextView!=null&&mSingerTextView!=null){
+            mSongTextView.setText(mSongList.get(mPosition).getName());
+            mSingerTextView.setText(mSongList.get(mPosition).getSinger());
+        }
+        if(mImageButtonPlay!=null){
+            switch (mPlayStatus){
+                case PlayStatus.IN_PAUSE:
+                    mImageButtonPlay.setImageResource(R.drawable.vector_drawable_play);
+                    break;
+                case PlayStatus.IN_PLAY:
+                    mImageButtonPlay.setImageResource(R.drawable.vector_drawable_pause);
+                    break;
+                default:
+                    break;
+            }
+        }
+        if(mImageSong!=null&&mSongList.get(mPosition).getBitmap()!=null){
+            Bitmap bitmap = MusicUtils.changeBitmapSize(mSongList.get(mPosition).getBitmap(),700,700);
+            mImageSong.setImageBitmap(bitmap);
         }
     }
 }
